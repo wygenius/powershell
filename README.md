@@ -1,2 +1,2 @@
 # powershell
-This repo contains PowerShell script I used for daily system administration
+This repo contains PowerShell script I used for daily system administration tasks.
