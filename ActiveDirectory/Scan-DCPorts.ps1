@@ -26,3 +26,26 @@ Write-Host "The script will scan mandatory ports to below domainc controller:"
 Write-Host "Target Domain Controller: $($TargetDC)" -ForegroundColor Green
 Write-Host "Ports: TCP-53, TCP-135, TCP-139,TCP-3268, TCP-3269, TCP-88, TCP-464, TCP-50187, TCP-5722, TCP-389, TCP-43243, TCP-445, TCP-636, UDP-53, UDP-389, UDP-88, UDP-123, UDP-137:138, UDP-445, UDP-464, UDP-3268, PING"
 PauseContinue
+
+if (Test-Connection -Ping -Count 1 $TargetDC -ErrorAction SilentlyContinue) {
+      Write-Host "$($TargetDC) respond to ICMP Ping."
+      PauseContinue
+}
+else {
+      Write-Host "$($TargetDC) NOT respond to ICMP Ping. Abort Script"
+      break
+}
+
+foreach ($SinglePort in $DCPorts) {
+      $Socket = New-Object Net.Sockets.TcpClient
+      $Socket.Connect($TargetDC, $SinglePort)
+      if ($Socket.Connected) {      
+            # Close the socket.
+            $Socket.Close()
+            # Return success string
+            Write-Host "Connection to $($TargetDC) on $($SinglePort) Successful"
+        }
+        else {
+            Write-Host "Connection to $($TargetDC) on $($SinglePort) Not Successful" -ForegroundColor Red
+        }
+}
